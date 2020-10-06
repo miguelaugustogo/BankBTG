@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity">
+
+    <TextView
+        android:id="@+id/tvValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/value"
+        android:layout_marginTop="@android:dimen/notification_large_icon_height"
+        android:layout_marginLeft="30dp"
+        android:textSize="@android:dimen/app_icon_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/edtValue"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:textAlignment="center"
+        android:textSize="@android:dimen/app_icon_size"
+        android:layout_marginTop="@android:dimen/notification_large_icon_height"
+        app:layout_constraintStart_toEndOf="@id/tvValue"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnFrom"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_margin="16dp"
+        android:text="@string/from"
+        android:textSize="16dp"
+        android:background="@drawable/btn_rounded_corners"
+        app:layout_constraintTop_toBottomOf="@+id/edtValue"
+        app:layout_constraintStart_toStartOf="@+id/tvValue"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
+        android:id="@+id/btnTo"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_margin="16dp"
+        android:text="@string/to"
+        android:textSize="16dp"
+        android:background="@drawable/btn_rounded_corners"
+        app:layout_constraintStart_toStartOf="@+id/tvValue"
+        app:layout_constraintTop_toBottomOf="@+id/btnFrom"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/llBtnActions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintStart_toStartOf="@+id/tvValue"
+        app:layout_constraintTop_toBottomOf="@+id/btnTo"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <Button
+            android:id="@+id/btnInvertCoins"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:text="@string/invert_coins"
+            android:padding="10dp"
+            android:textSize="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/btn_rounded_corners"
+            app:layout_constraintStart_toStartOf="@+id/tvValue"
+            app:layout_constraintTop_toBottomOf="@+id/btnConvert"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <Button
+            android:id="@+id/btnConvert"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="@string/convert"
+            android:textSize="16dp"
+            android:background="@drawable/btn_rounded_corners"
+            app:layout_constraintStart_toStartOf="@+id/tvValue"
+            app:layout_constraintTop_toBottomOf="@+id/btnTo"
+            app:layout_constraintLeft_toLeftOf="parent" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/result"
+        android:textSize="@android:dimen/app_icon_size"
+        app:layout_constraintStart_toStartOf="@+id/tvValue"
+        app:layout_constraintTop_toBottomOf="@+id/llBtnActions" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

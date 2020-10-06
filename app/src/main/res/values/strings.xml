@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">BankBTG</string>
+    <string name="value">Value:</string>
+    <string name="from">From:</string>
+    <string name="to">To:</string>
+    <string name="convert">Convert</string>
+    <string name="invert_coins">Invert Coins</string>
+    <string name="result">Result:</string>
+    <string name="result_convert">Result: %1$s %2$s is equal to %3$s %4$s.</string>
+    <string name="search_hint">Enter the name or Acronym to search.</string>
+    <string name="update_sucess">Data updated successfully.</string>
+    <string name="load_failed">Failed to load. Check the connection and try again.</string>
+    <string name="load_failed_offline">Failed to load. Loading data offline.</string>
+    <string name="request_failed">Request Failed. code: %1$s Message: %2$s</string>
+    <string name="enter_value">Enter a value for conversion.</string>
+
+</resources>
