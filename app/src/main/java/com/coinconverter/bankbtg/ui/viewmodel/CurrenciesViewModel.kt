@@ -1,101 +1,50 @@
 package com.coinconverter.bankbtg.ui.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.coinconverter.bankbtg.R
-import com.coinconverter.bankbtg.domain.model.CurrencyModel
-import com.coinconverter.bankbtg.domain.model.QuotesModel
-import com.coinconverter.bankbtg.integration.RetrofitConfig
-import com.coinconverter.bankbtg.domain.responses.CurrencyResponse
-import com.coinconverter.bankbtg.domain.responses.QuotesResponse
-import com.coinconverter.bankbtg.utils.FunctionsUtils.showMessage
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import androidx.lifecycle.ViewModel
+import com.coinconverter.bankbtg.data.db.model.CurrencyModel
+import com.coinconverter.bankbtg.data.db.model.QuotesModel
+import com.desafio.btgpactual.repositories.CurrencyRepository
+import com.desafio.btgpactual.repositories.QuoteRepository
 
-class CurrenciesViewModel: BasicViewModel() {
+class CurrenciesViewModel(
+    private val currencyRepository: CurrencyRepository,
+    private val quoteRepository: QuoteRepository
+) : ViewModel() {
 
     var listCurrencies: MutableLiveData<List<CurrencyModel>> = MutableLiveData()
     var currencySelected: MutableLiveData<String> = MutableLiveData()
+    var loading: MutableLiveData<Boolean> = MutableLiveData()
     var isUpdating = false
 
-    fun getCurrencies() {
-
-        val currenciesList = currenciesDataBase.getAll()
-        if (currenciesList.isEmpty()) {
-            callCurrencies()
-        } else {
-            listCurrencies.postValue(currenciesList)
-            loading.postValue(false)
-        }
-    }
-
-    fun getQuotes(){
-        val quotesList = quotesDatabase.getAll()
-        if (quotesList.isEmpty()) callQuotes()
-    }
-
-    fun callCurrencies() {
-        if (isUpdating) loading.postValue(true)
-        val call = RetrofitConfig().getAPI().getListCurrencies()
-        call.enqueue(object : Callback<CurrencyResponse> {
-            override fun onResponse(call: Call<CurrencyResponse?>, response: Response<CurrencyResponse>) {
-
-                val respondeSucess= response.body()?.success
-                if (respondeSucess!!){
-                    val listCurrency = response.body()
-                        ?.currencies?.map { CurrencyModel(it.key, it.value) }
-
-                    listCurrency?.let {
-                        currenciesDataBase.deleteAll()
-                        currenciesDataBase.insertAll(it)
-                        listCurrencies.postValue(it)
+    fun callCurrencies(): LiveData<List<CurrencyModel>> {
+        val liveData = MutableLiveData<List<CurrencyModel>>()
+        currencyRepository.callCurrencies(
+            sucess = {
+                val codes = it
+                    .sortedBy { currencyModel ->
+                        currencyModel.code
                     }
-                }else{
-                    val respondeError = response.body()?.error
-                    showMessage(context, context.getString(R.string.request_failed,respondeError?.code, respondeError?.info ))
-                }
-                if (isUpdating){
-                    showMessage(context,context.getString(R.string.update_sucess))
-                    isUpdating= false
-                }
+                liveData.value = codes
+                listCurrencies.postValue(codes)
                 loading.postValue(false)
-            }
-
-            override fun onFailure(call: Call<CurrencyResponse>?, t: Throwable) {
-                val listCurrency= currenciesDataBase.getAll()
-                listCurrencies.postValue(listCurrency)
-                if (listCurrency.isEmpty())
-                    showMessage(context, context.getString(R.string.load_failed_offline))
-                else
-                    showMessage(context, context.getString(R.string.load_failed))
-
-                loading.postValue(false)
-            }
-        })
+            },
+            error = {}
+        )
+        return liveData
     }
 
-    fun callQuotes(){
-        val call = RetrofitConfig().getAPI().getLive()
-        call.enqueue(object : Callback<QuotesResponse>{
-            override fun onResponse(call: Call<QuotesResponse>, response: Response<QuotesResponse>) {
-                val respondeSucess= response.body()?.success
-                if (respondeSucess!!){
-                val listQuotes = response.body()
-                    ?.quotes?.map { QuotesModel(it.key, it.value) }
-                listQuotes?.let {
-                    quotesDatabase.deleteAll()
-                    quotesDatabase.insertAll(it)
-                }
-                }else{
-                    val respondeError = response.body()?.error
-                    showMessage(context, context.getString(R.string.request_failed,respondeError?.code, respondeError?.info ))
-                }
-            }
+    fun callQuotes(): LiveData<List<QuotesModel>> {
+        val liveData = MutableLiveData<List<QuotesModel>>()
+        quoteRepository.callQuotes(
+            sucess = {
+                liveData.value = it
+            }, error =  {
 
-            override fun onFailure(call: Call<QuotesResponse>, t: Throwable) {
-                t.message?.let { showMessage(context, it) }
             }
-        })
+        )
+        return liveData
     }
 
     fun onSelectCurrency(currenciesCode: String){

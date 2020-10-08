@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/value"
-        android:layout_marginTop="@android:dimen/notification_large_icon_height"
+        android:layout_marginTop="30dp"
         android:layout_marginLeft="30dp"
         android:textSize="@android:dimen/app_icon_size"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -24,7 +24,7 @@
         android:inputType="numberDecimal"
         android:textAlignment="center"
         android:textSize="@android:dimen/app_icon_size"
-        android:layout_marginTop="@android:dimen/notification_large_icon_height"
+        android:layout_marginTop="20dp"
         app:layout_constraintStart_toEndOf="@id/tvValue"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +33,9 @@
         android:id="@+id/btnFrom"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:layout_margin="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:text="@string/from"
         android:textSize="16dp"
         android:background="@drawable/btn_rounded_corners"
@@ -87,14 +89,24 @@
             app:layout_constraintLeft_toLeftOf="parent" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/llResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="@+id/tvValue"
+        app:layout_constraintTop_toBottomOf="@+id/llBtnActions"
+        app:layout_constraintLeft_toLeftOf="parent">
+
     <TextView
         android:id="@+id/tvResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:text="@string/result"
         android:textSize="@android:dimen/app_icon_size"
-        app:layout_constraintStart_toStartOf="@+id/tvValue"
-        app:layout_constraintTop_toBottomOf="@+id/llBtnActions" />
+        app:layout_constraintStart_toStartOf="@+id/tvValue"/>
+</LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

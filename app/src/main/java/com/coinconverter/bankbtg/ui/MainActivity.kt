@@ -5,31 +5,31 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.coinconverter.bankbtg.R
-import com.coinconverter.bankbtg.data.DataBase
-import com.coinconverter.bankbtg.data.DataBaseInitializer
-import com.coinconverter.bankbtg.domain.model.CurrencyModel
+import com.coinconverter.bankbtg.data.db.DataBaseApp
 import com.coinconverter.bankbtg.ui.viewmodel.MainViewModel
-import com.coinconverter.bankbtg.utils.CURRENCY_ORDER
-import com.coinconverter.bankbtg.utils.CURRENCY_SELECTED
+import com.coinconverter.bankbtg.ui.viewmodel.factory.MainFactory
+import com.coinconverter.bankbtg.utils.*
 import com.coinconverter.bankbtg.utils.FunctionsUtils.replaceCharActivity
-import com.coinconverter.bankbtg.utils.INPUT_CURRENCY
-import com.coinconverter.bankbtg.utils.OUTPUT_CURRENCY
+import com.desafio.btgpactual.repositories.CurrencyRepository
+import com.desafio.btgpactual.repositories.QuoteRepository
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var viewModel: MainViewModel
+    private val viewModel by lazy {
+        val currencyRepository = CurrencyRepository(DataBaseApp.create(this, false).currencyDao())
+        val quoteRepository = QuoteRepository(DataBaseApp.create(this, false).quoteDao())
+        val factory = MainFactory(currencyRepository, quoteRepository)
+        val viewModel = ViewModelProvider(this, factory)
+        viewModel.get(MainViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        DataBaseInitializer.initDataBase(this)
-        DataBase(this)
-
-        viewModel = MainViewModel()
-        viewModel.getContext(this)
         btnConvert.isEnabled = false
         setObservables()
         setClickListeners()
@@ -50,17 +50,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setObservables() {
-        viewModel.inputCurrencies.observe(this, Observer { inpCur ->
+        viewModel.inputCurrencies.observe(this, Observer { inputCurrrency ->
             btnFrom.text =
-                replaceCharActivity(getString(R.string.from), inpCur.country, inpCur.code)
+                replaceCharActivity(getString(R.string.from), inputCurrrency.country, inputCurrrency.code)
         })
 
-        viewModel.outputCurrencies.observe(this, Observer { outCur ->
-            btnTo.text = replaceCharActivity(getString(R.string.to), outCur.country, outCur.code)
+        viewModel.outputCurrencies.observe(this, Observer { outuputCurrrency ->
+            btnTo.text = replaceCharActivity(getString(R.string.to), outuputCurrrency.country, outuputCurrrency.code)
         })
 
         viewModel.enableConvert.observe(this, Observer { enabled ->
             btnConvert.isEnabled = enabled
+        })
+
+        viewModel.pleaseEnterValue.observe(this, Observer {enabled ->
+            FunctionsUtils.showMessage(this, getString(R.string.enter_value))
         })
 
         viewModel.convertValue.observe(this, Observer { value ->

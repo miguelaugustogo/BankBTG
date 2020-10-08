@@ -1,17 +1,25 @@
 package com.coinconverter.bankbtg.ui.viewmodel
 
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.coinconverter.bankbtg.R
-import com.coinconverter.bankbtg.domain.model.CurrencyModel
-import com.coinconverter.bankbtg.domain.model.QuotesModel
+import com.coinconverter.bankbtg.data.db.model.CurrencyModel
+import com.coinconverter.bankbtg.data.db.model.QuotesModel
 import com.coinconverter.bankbtg.utils.FunctionsUtils
 import com.coinconverter.bankbtg.utils.FunctionsUtils.doubleToString
 import com.coinconverter.bankbtg.utils.FunctionsUtils.stringReplaceComma
 import com.coinconverter.bankbtg.utils.INPUT_CURRENCY
 import com.coinconverter.bankbtg.utils.OUTPUT_CURRENCY
+import com.desafio.btgpactual.repositories.CurrencyRepository
+import com.desafio.btgpactual.repositories.QuoteRepository
 
-class MainViewModel: BasicViewModel() {
+class MainViewModel(
+    private val repositoryCurrency: CurrencyRepository,
+    private val repositoryQuote: QuoteRepository
+) : ViewModel() {
 
+    var pleaseEnterValue: MutableLiveData<Boolean> = MutableLiveData()
     var inputCurrencies: MutableLiveData<CurrencyModel> = MutableLiveData()
     var outputCurrencies: MutableLiveData<CurrencyModel> = MutableLiveData()
     var inputQuotes: MutableLiveData<QuotesModel> = MutableLiveData()
@@ -23,19 +31,19 @@ class MainViewModel: BasicViewModel() {
     private var hasOutputCurrencies = false
 
     fun onCurrencySelected(flow: Int?, code: String?){
-        val currency = code?.let { currenciesDataBase.findByCode(it) }
+        val currency = code?.let { repositoryCurrency.findByCode(it) }
 
         when(flow){
             INPUT_CURRENCY -> {
                 hasInputCurrencies = true
                 inputCurrencies.postValue(currency)
-                val quote = quotesDatabase.findByCode("USD$code")
+                val quote = repositoryQuote.findByCode("USD$code")
                 inputQuotes.postValue(quote)
                 enableButton()
             }
             OUTPUT_CURRENCY -> {
                 outputCurrencies.postValue(currency)
-                val quote = quotesDatabase.findByCode("USD$code")
+                val quote = repositoryQuote.findByCode("USD$code")
                 outputQuotes.postValue(quote)
                 hasOutputCurrencies = true
                 enableButton()
@@ -50,13 +58,15 @@ class MainViewModel: BasicViewModel() {
 
     fun doConvert(inputText: String){
         if(inputText.isEmpty()){
-            FunctionsUtils.showMessage(context, context.getString(R.string.enter_value))
+//            FunctionsUtils.showMessage(context, getString(R.string.enter_value))
+            pleaseEnterValue.postValue(true)
         } else {
 
             val inputValue = (stringReplaceComma(inputText)).toDouble()
 
             if(inputValue < 0){
-                FunctionsUtils.showMessage(context, context.getString(R.string.enter_value))
+//                FunctionsUtils.showMessage(context, context.getString(R.string.enter_value))
+                pleaseEnterValue.postValue(true)
             } else {
                 val qInput = inputQuotes.value?.value
                 val qOutput = outputQuotes.value?.value
@@ -67,12 +77,12 @@ class MainViewModel: BasicViewModel() {
     }
 
     fun setStartInfo(){
-        if(quotesDatabase.getAll().isNotEmpty() && currenciesDataBase.getAll().isNotEmpty()){
-            inputCurrencies.postValue(currenciesDataBase.findByCode("BRL"))
-            inputQuotes.postValue(quotesDatabase.findByCode("USDBRL"))
+        if(repositoryQuote.getAll().isNotEmpty() && repositoryCurrency.getAll().isNotEmpty()){
+            inputCurrencies.postValue(repositoryCurrency.findByCode("BRL"))
+            inputQuotes.postValue(repositoryQuote.findByCode("USDBRL"))
 
-            outputCurrencies.postValue(currenciesDataBase.findByCode("USD"))
-            outputQuotes.postValue(quotesDatabase.findByCode("USDUSD"))
+            outputCurrencies.postValue(repositoryCurrency.findByCode("USD"))
+            outputQuotes.postValue(repositoryQuote.findByCode("USDUSD"))
 
             enableConvert.postValue(true)
         }

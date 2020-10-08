@@ -8,21 +8,33 @@ import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.coinconverter.bankbtg.R
+import com.coinconverter.bankbtg.data.db.DataBaseApp
 import com.coinconverter.bankbtg.ui.adapter.CurrencyAdapter
 import com.coinconverter.bankbtg.ui.viewmodel.CurrenciesViewModel
+import com.coinconverter.bankbtg.ui.viewmodel.factory.CurrenciesFactory
 import com.coinconverter.bankbtg.utils.CURRENCY_ORDER
 import com.coinconverter.bankbtg.utils.CURRENCY_SELECTED
+import com.desafio.btgpactual.repositories.CurrencyRepository
+import com.desafio.btgpactual.repositories.QuoteRepository
 import kotlinx.android.synthetic.main.activity_currencies.*
 
 class CurrenciesActivity : AppCompatActivity() {
 
     var flow: Int = 0
     var adapter: CurrencyAdapter? = null
-    var viewModel: CurrenciesViewModel = CurrenciesViewModel()
     lateinit var linearLayoutManager: LinearLayoutManager
+
+    private val viewModel by lazy {
+        val currencyRepository = CurrencyRepository(DataBaseApp.create(this, false).currencyDao())
+        val quoteRepository = QuoteRepository(DataBaseApp.create(this, false).quoteDao())
+        val factory = CurrenciesFactory(currencyRepository, quoteRepository)
+        val viewModel = ViewModelProvider(this, factory)
+        viewModel.get(CurrenciesViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +45,10 @@ class CurrenciesActivity : AppCompatActivity() {
         linearLayoutManager= LinearLayoutManager(this)
         rvCurrencies.layoutManager= linearLayoutManager
 
+        viewModel.callCurrencies()
+        viewModel.callQuotes()
         setObservables()
         setListeners()
-
-        viewModel.getContext(this)
-        viewModel.getCurrencies()
-        viewModel.getQuotes()
     }
 
     private fun setObservables(){
@@ -78,7 +88,6 @@ class CurrenciesActivity : AppCompatActivity() {
                 if (!recyclerView.canScrollVertically(-1) && newState==RecyclerView.SCROLL_STATE_IDLE){
                     viewModel.isUpdating = true
                     viewModel.callCurrencies()
-                    viewModel.getQuotes()
                 }
             }
         })
@@ -91,8 +100,5 @@ class CurrenciesActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
         })
     }
-
-
-
 
 }

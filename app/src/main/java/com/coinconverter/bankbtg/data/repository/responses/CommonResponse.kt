@@ -1,4 +1,4 @@
-package com.coinconverter.bankbtg.domain.responses
+package com.coinconverter.bankbtg.data.repository.responses
 
 open class CommonResponse {
 

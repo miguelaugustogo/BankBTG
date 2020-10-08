@@ -1,6 +1,5 @@
-package com.coinconverter.bankbtg.integration
+package com.coinconverter.bankbtg.data.api
 
-import com.coinconverter.bankbtg.repository.RetrofitRepository
 import com.coinconverter.bankbtg.utils.API_KEY
 import com.coinconverter.bankbtg.utils.BASE_URL
 import okhttp3.Interceptor
@@ -9,7 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class RetrofitConfig {
+class RetrofitApi {
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -17,7 +16,7 @@ class RetrofitConfig {
         .client(httpClient())
         .build()
 
-    fun getAPI() = retrofit.create(RetrofitRepository::class.java)
+    fun getAPI() = retrofit.create(RetrofitService::class.java)
 
     fun httpClient(): OkHttpClient {
         val httpClient = OkHttpClient

@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SortedList
 import androidx.recyclerview.widget.SortedListAdapterCallback
 import com.coinconverter.bankbtg.R
-import com.coinconverter.bankbtg.domain.model.CurrencyModel
+//import com.coinconverter.bankbtg.domain.model.CurrencyModel
+import com.coinconverter.bankbtg.data.db.model.CurrencyModel
 import com.coinconverter.bankbtg.ui.viewmodel.CurrenciesViewModel
 import kotlinx.android.synthetic.main.currency_adapter.view.*
 import kotlin.collections.ArrayList
@@ -16,17 +17,17 @@ class CurrencyAdapter (private val currencies: List<CurrencyModel>
                        , private val viewModel: CurrenciesViewModel
 ): RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
 
-    private var sList: SortedList<CurrencyModel>
+    private var sortedList: SortedList<CurrencyModel>
 
     init {
-        sList = SortedList(CurrencyModel::class.java, object : SortedListAdapterCallback<CurrencyModel>(this) {
+        sortedList = SortedList(CurrencyModel::class.java, object : SortedListAdapterCallback<CurrencyModel>(this) {
             override fun compare(o1: CurrencyModel, o2: CurrencyModel): Int = o1.code.compareTo(o2.code)
 
             override fun areContentsTheSame(oldItem: CurrencyModel, newItem: CurrencyModel): Boolean = oldItem.country == newItem.country
 
             override fun areItemsTheSame(item1: CurrencyModel, item2: CurrencyModel): Boolean = item1 == item2
         })
-        sList.addAll(currencies)
+        sortedList.addAll(currencies)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,12 +35,12 @@ class CurrencyAdapter (private val currencies: List<CurrencyModel>
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int= sList.size()
+    override fun getItemCount(): Int= sortedList.size()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currency = sList[position]
+        val currency = sortedList[position]
         holder.bind(currency)
-        holder.itemView.setOnClickListener {viewModel.onSelectCurrency(sList[position].code)}
+        holder.itemView.setOnClickListener {viewModel.onSelectCurrency(sortedList[position].code)}
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -61,9 +62,9 @@ class CurrencyAdapter (private val currencies: List<CurrencyModel>
             if (nameUc.contains(textUc) || symbolUc.contains(textUc))  filteredList.add(it)
         }
 
-        sList.beginBatchedUpdates()
-        sList.clear()
-        sList.addAll(filteredList)
-        sList.endBatchedUpdates()
+        sortedList.beginBatchedUpdates()
+        sortedList.clear()
+        sortedList.addAll(filteredList)
+        sortedList.endBatchedUpdates()
     }
 }

@@ -3,8 +3,6 @@ package com.coinconverter.bankbtg
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
-import com.coinconverter.bankbtg.data.DataBase
-import com.coinconverter.bankbtg.data.DataBaseInitializer
 import com.coinconverter.bankbtg.domain.model.CurrencyModel
 import com.coinconverter.bankbtg.ui.viewmodel.CurrenciesViewModel
 import org.junit.Before

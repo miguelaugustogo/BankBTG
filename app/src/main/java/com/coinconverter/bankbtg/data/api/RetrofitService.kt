@@ -1,11 +1,11 @@
-package com.coinconverter.bankbtg.repository
+package com.coinconverter.bankbtg.data.api
 
-import com.coinconverter.bankbtg.domain.responses.CurrencyResponse
-import com.coinconverter.bankbtg.domain.responses.QuotesResponse
+import com.coinconverter.bankbtg.data.repository.responses.CurrencyResponse
+import com.coinconverter.bankbtg.data.repository.responses.QuotesResponse
 import retrofit2.Call
 import retrofit2.http.GET
 
-interface RetrofitRepository {
+interface RetrofitService {
 
 //    @Headers("Content-Type: application/json", "Accept: application/json")
     @GET("list")
